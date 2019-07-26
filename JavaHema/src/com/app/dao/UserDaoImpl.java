@@ -27,13 +27,14 @@ public class UserDaoImpl implements IUserDao {
 	{
 		String jpql = "select u from UserPojos u where u.email=:email and u.password=:password";
 		
-	return sf.getCurrentSession().createQuery(jpql,UserPojos.class)
+	    return sf.getCurrentSession().createQuery(jpql,UserPojos.class)
 	    .setParameter("email", email).setParameter("password",password).getSingleResult();
 	
 	
 	}
 	@Override
 	public String registerUser(UserPojos p) {
+		p.setRole("user");
 		sf.getCurrentSession().persist(p);
 		return "user registration succesful";
 	}
@@ -147,13 +148,16 @@ public class UserDaoImpl implements IUserDao {
 					.setParameter("id", id).getSingleResult();
 	}
 	@Override
-	public Double getexpensemon(Integer id) {
-		return null;
+	public Double getexpensemon(Integer id,Integer ab) {
+		String jpql = "select sum(e.amount) from UserExpense e where e.u1.id=:id and month(e.date)=:ab";
+		return sf.getCurrentSession().createQuery(jpql,Double.class)
+				.setParameter("id", id).setParameter("ab",ab).getSingleResult();
 	}
 	@Override
-	public Double getincomemon(Integer id) {
-		
-		return null;
+	public Double getincomemon(Integer id,Integer ab) {
+		String jpql = "select sum(e.amount) from UserIncome e where e.u.id=:id and month(e.date)=:ab";
+		return sf.getCurrentSession().createQuery(jpql,Double.class)
+				.setParameter("id", id).setParameter("ab",ab).getSingleResult();
 	}
 
 	@Override
@@ -168,6 +172,65 @@ public class UserDaoImpl implements IUserDao {
 			
 		 return sf.getCurrentSession().get(UserPojos.class,id);
 	}
+	@Override
+	public Double getexpenseyear(Integer id,Integer ab) {
+		System.out.println("in id"+id+"in ab"+ab);
+		String jpql = "select sum(e.amount) from UserExpense e where e.u1.id=:id and year(e.date)=:ab";
+		return sf.getCurrentSession().createQuery(jpql,Double.class)
+				.setParameter("id", id).setParameter("ab",ab).getSingleResult();
+	}
+	@Override
+	public Double getincomeyear(Integer id,Integer ab) {
+		String jpql = "select sum(e.amount) from UserIncome e where e.u.id=:id and year(e.date)=:ab";
+		return sf.getCurrentSession().createQuery(jpql,Double.class)
+				.setParameter("id", id).setParameter("ab",ab).getSingleResult();
+	}
+	@Override
+	public int totaluser(String ab) {
+		System.out.println(" in ab"+ab);
+	    String jpql ="select e from UserPojos e where e.role=:ab";
+	  // System.out.println(sf.getCurrentSession().createQuery(jpql,UserPojos.class).setParameter("ab",ab)
+			//   .getSingleResult());
+	    
+	  List<UserPojos> u= sf.getCurrentSession().createQuery(jpql,UserPojos.class).setParameter("ab",ab)
+			   .getResultList();
+	  System.out.println("Raman "+u.size());
+	  return u.size();
+	}
+	@Override
+	public List<UserPojos> getlistuser(String ab) {
+		String jpql="select c from UserPojos c where c.role=:ab";
+		List<UserPojos> u = sf.getCurrentSession().createQuery(jpql,UserPojos.class)
+				.setParameter("ab",ab).getResultList();
+		System.out.println("all the list "+u);
+        return u;
+	}
+	@Override
+	public String deleteuser(Integer id) 
+	{
+		Session sh = sf.getCurrentSession();
+		
+		   UserPojos u =sh.get(UserPojos.class, id);
+		   if(u!=null)
+		   {
+			   sh.delete(u);
+			   return "user is deleted"+id;
+		   }
+		   return "user is deleted";
+	}
+	@Override
+	public UserPojos formAdminsetting(Integer id) {
+		 System.out.println("this is id of"+id);
+			
+		 return sf.getCurrentSession().get(UserPojos.class,id);
+	}
+	@Override
+	public UserPojos adminsetting(UserPojos update) {
+		sf.getCurrentSession().update(update);
+		return update;
+	}
+	
+	
 	
 	
 	

@@ -41,12 +41,16 @@ public class UserController
  	public ResponseEntity<String> loginuser(@RequestBody UserPojos u ,HttpSession hs)
  	{ 
      	System.out.println("email"+u.getEmail()+"password"+u.getPassword());
+     	System.out.println("in the login "+u.getRole());
  		try
  		{
  			UserPojos u2= dao.ValidateUser(u.getEmail(),u.getPassword());
  			u1=u2;
+ 			System.out.println(u2);
+ 			System.out.println(u1);
  		    //hs.setAttribute("user",u1);
  		    System.out.println("User In In Login Controller="+u1.getId());
+ 		    System.out.println("in the login "+u1.getRole());
  		   for (UserExpense uex : u1.getExpense()) {
 			
  			   System.out.println("User Expence= "+uex);
@@ -57,10 +61,14 @@ public class UserController
  		    		return new ResponseEntity<>("user login succesful",HttpStatus.OK);
  				
  				}
- 				else
+ 				else if(u1.getRole().equals("admin"))
  				{
  					return new ResponseEntity<>("admin login succesful",HttpStatus.OK);
  					
+ 				}
+ 				else
+ 				{
+ 					return new ResponseEntity<>("invalid",HttpStatus.OK);
  				}
  		    
  		}
@@ -239,7 +247,7 @@ public class UserController
 	   {
 		   System.out.println(" in the setting controller");
 		   System.out.println("user id"+u1);
-		   return new ResponseEntity<>(u1,HttpStatus.OK);
+		   return new ResponseEntity<>(dao.ValidateUser(u1.getEmail(),u1.getPassword()),HttpStatus.OK);
 	   }
 	   
 		@PutMapping("/setting/{id}")
@@ -255,5 +263,97 @@ public class UserController
 				return new ResponseEntity<UserPojos>(dao.setting(update), HttpStatus.OK);
 		}
 		
-  
+		@GetMapping("/expensemonth/{id}")
+		public ResponseEntity<Double> totalexpense(UserExpense u,@PathVariable int id)
+		{
+			System.out.println("int the list expense"+id);
+		
+			System.out.println("user id"+u1.getId());
+			return new ResponseEntity<>(dao.getexpensemon(u1.getId(),id),HttpStatus.OK);
+					
+		}
+	    
+	    @GetMapping("/incomemonth/{id}")
+		public ResponseEntity<Double> totalincome(UserIncome a,@PathVariable int id)
+		{
+			System.out.println("int the list income"+id);
+		
+			return new ResponseEntity<>(dao.getincomemon(u1.getId(),id),HttpStatus.OK);
+					
+		}
+	    @GetMapping("/expenseabc/{id}")
+		public ResponseEntity<Double> totalexpenseyr(UserExpense u,@PathVariable int id)
+		{
+			
+		
+			System.out.println("user id"+u1.getId());
+			System.out.println("coming id"+id);
+			return new ResponseEntity<>(dao.getexpenseyear(u1.getId(),id),HttpStatus.OK);
+					
+		}
+	    
+	    @GetMapping("/yearabc/{id}")
+		public ResponseEntity<Double> totalincomeyr(UserIncome u,@PathVariable int id)
+		{
+			System.out.println("int the list income"+id);
+			return new ResponseEntity<>(dao.getincomeyear(u1.getId(),id),HttpStatus.OK);
+		}
+	    
+	    @GetMapping("/logout")
+	    public ResponseEntity<?> logout()
+	    {
+	    		u1=null;
+	    		return new ResponseEntity<>("logout sussesful",HttpStatus.OK);
+	    }
+	    
+	    @GetMapping("/admin")
+	    public ResponseEntity<?> alluser()
+	    {
+	    	return new ResponseEntity<>(dao.totaluser("user"),HttpStatus.OK);
+	    }
+	    
+	    @GetMapping("/userDetails")
+		public ResponseEntity<List<UserPojos>> findAllUser()
+		{
+			System.out.println("int the list controller");
+		
+			System.out.println(u1.getId());
+			return new ResponseEntity<>(dao.getlistuser("user"),HttpStatus.OK);
+					
+		}
+	    
+	    
+		   @DeleteMapping("/deleteuser/{id}")
+			public ResponseEntity<String> deletuser(@PathVariable int id)
+			{
+				System.out.println(" in delete income"+id);
+				try
+				{
+					return new ResponseEntity<>(dao.deleteuser(id),HttpStatus.OK);
+				}
+				catch (RuntimeException e) 
+				{
+					return new ResponseEntity<>("income deletion failed "+e.getMessage(),HttpStatus.NOT_FOUND);
+				}
+			}
+		   @GetMapping("/adminsetting")
+		   public ResponseEntity<UserPojos> getadminsetting()
+		   {
+			   System.out.println(" in the setting controller");
+			   System.out.println("user id"+u1);
+			   return new ResponseEntity<>(dao.ValidateUser(u1.getEmail(),u1.getPassword()),HttpStatus.OK);
+		   }
+		   
+			@PutMapping("/adminsetting/{id}")
+			public ResponseEntity<?> updateadmin(@PathVariable int id,@RequestBody UserPojos update)
+			{
+				System.out.println("in the income ctor"+id+" "+update);
+				UserPojos abc = dao.setting(u1);
+		        
+		        if(abc==null)
+					return new ResponseEntity<String>("Invalid Stock ID", HttpStatus.NOT_FOUND);
+		        update.setId(id);
+					
+					return new ResponseEntity<UserPojos>(dao.setting(update), HttpStatus.OK);
+			}
 }

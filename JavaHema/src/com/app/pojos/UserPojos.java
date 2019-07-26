@@ -92,7 +92,7 @@ public String getRole() {
 }
 
 public void setRole(String role) {
-	this.role = "user";
+	this.role = role;
 }
 @JsonIgnore
 //@LazyCollection(LazyCollectionOption.FALSE)
