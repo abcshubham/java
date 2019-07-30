@@ -7,6 +7,10 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.app.pojos.UserAddExpense;
+import com.app.pojos.UserAddMop;
+import com.app.pojos.UserComplain;
 import com.app.pojos.UserExpense;
 import com.app.pojos.UserIncome;
 import com.app.pojos.UserPojos;
@@ -77,18 +81,11 @@ public class UserDaoImpl implements IUserDao {
 	}
 	@Override
 	public UserExpense expense(Integer id) {
-		/*String jpql="select c from UserExpense c where c.assetid=:id";
 		
-		return sf.getCurrentSession().createQuery(jpql,UserExpense.class).setParameter("id",id)
-				.getSingleResult();*/
 		System.out.println("this is id of"+id);
 		
 		return sf.getCurrentSession().get(UserExpense.class,id);
 		
-		
-		
-		
-	
 	}
 	@Override
 	public String expenseregister(UserIncome income) {
@@ -229,6 +226,97 @@ public class UserDaoImpl implements IUserDao {
 		sf.getCurrentSession().update(update);
 		return update;
 	}
+	
+	@Override
+	public String complain(UserComplain compl) {
+		sf.getCurrentSession().persist(compl);
+		return "compl register succesful";
+	}
+	@Override
+	public List<UserComplain> getusercomp() 
+	{
+		String jpql="select u.compid,u2.email,u2.fname,u.complain from usercomp u inner join user u2 on u.id=u2.id order by u.compid desc";
+		List<UserComplain> u = sf.getCurrentSession().createSQLQuery(jpql).getResultList();
+		System.out.println("all the list "+u);
+		return u;
+	}
+	@Override
+	public String deletecomp(Integer id) {
+		
+		Session sh = sf.getCurrentSession();
+		
+		   UserComplain ua =sh.get(UserComplain.class, id);
+		   if(ua!=null)
+		   {
+			   ua.getU2().getComp().remove(ua);
+		       ua.setU2(null);
+			   sh.delete(ua);
+			   return "comp is deleted"+id;
+		   }
+		   return "comp is deleted";
+	}
+	@Override
+	public String registerUserAdmin(UserPojos p) {
+		p.setRole("user");
+		sf.getCurrentSession().persist(p);
+		return "user admin registration succesful";
+	}
+	@Override
+	public List<UserAddMop> getallmop(Integer id) {
+		String jpql="select c from UserAddMop c where c.u3.id=:id";
+		List<UserAddMop> u = sf.getCurrentSession().createQuery(jpql,UserAddMop.class)
+				.setParameter("id",id).getResultList();
+		System.out.println("all the list "+u);
+		return u;
+	}
+	@Override
+	public String savemop(UserAddMop mop) {
+		sf.getCurrentSession().persist(mop);
+		return "income register succesful";
+	}
+	@Override
+	public String deletemop(Integer id) {
+		Session sh = sf.getCurrentSession();
+		
+		   UserAddMop ua =sh.get(UserAddMop.class, id);
+		   if(ua!=null)
+		   {
+			    ua.getU3().getComp().remove(ua);
+		        ua.setU3(null);
+			   //sh.delete(ua);
+			   return "comp is deleted"+id;
+		   }
+		   return "comp is deleted";
+	}
+	@Override
+	public String categorytype(UserAddExpense expense) {
+		sf.getCurrentSession().persist(expense);
+		return "income register succesful";
+	}
+	@Override
+	public String deletecatexp(Integer id) {
+		Session sh = sf.getCurrentSession();
+		
+		   UserAddExpense ua =sh.get(UserAddExpense.class, id);
+		   if(ua!=null)
+		   {
+			    ua.getU4().getComp().remove(ua);
+		        ua.setU4(null);
+			   //sh.delete(ua);
+			   return "comp is deleted"+id;
+		   }
+		   return "comp is deleted";
+	}
+	@Override
+	public List<UserAddExpense> getallcat(Integer id) {
+		
+		String jpql="select c from UserAddExpense c where c.u4.id=:id";
+		List<UserAddExpense> u = sf.getCurrentSession().createQuery(jpql,UserAddExpense.class)
+				.setParameter("id",id).getResultList();
+		System.out.println("all the list "+u);
+		return u;
+	}
+	
 	
 	
 	

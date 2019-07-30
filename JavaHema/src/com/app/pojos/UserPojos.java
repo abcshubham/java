@@ -25,6 +25,11 @@ public class UserPojos
    private String role;
    private List<UserExpense> expense= new ArrayList<>();
    private List<UserIncome> income=new ArrayList<>();
+   private List<UserComplain> comp=new ArrayList<>();
+   private List<UserAddMop> mop= new ArrayList<>();
+   private List<UserAddExpense> mopexpe=new ArrayList<>();
+   
+   
    
  public UserPojos() 
  {
@@ -70,7 +75,7 @@ public void setLname(String lname) {
 	this.lname = lname;
 }
 
-@Column(length = 20, unique = true)
+@Column(length = 50, unique = true)
 public String getEmail() {
 	return email;
 }
@@ -95,7 +100,6 @@ public void setRole(String role) {
 	this.role = role;
 }
 @JsonIgnore
-//@LazyCollection(LazyCollectionOption.FALSE)
 @OneToMany(mappedBy="u1",orphanRemoval=true,cascade=CascadeType.ALL,fetch=FetchType.EAGER)
 public List<UserExpense> getExpense() {
 	return expense;
@@ -112,9 +116,46 @@ public List<UserIncome> getIncome() {
 	return income;
 }
 
-
 public void setIncome(List<UserIncome> income) {
 	this.income = income;
+}
+
+@JsonIgnore
+@LazyCollection(LazyCollectionOption.FALSE)
+@OneToMany(mappedBy="u2",orphanRemoval=true,cascade=CascadeType.ALL)
+public List<UserComplain> getComp() {
+	return comp;
+}
+
+
+public void setComp(List<UserComplain> comp) {
+	this.comp = comp;
+}
+
+
+
+@JsonIgnore
+@LazyCollection(LazyCollectionOption.FALSE)
+@OneToMany(mappedBy="u3",orphanRemoval=true,cascade=CascadeType.ALL)
+public List<UserAddMop> getMop() {
+	return mop;
+}
+
+
+public void setMop(List<UserAddMop> mop) {
+	this.mop = mop;
+}
+
+@JsonIgnore
+@LazyCollection(LazyCollectionOption.FALSE)
+@OneToMany(mappedBy="u4",orphanRemoval=true,cascade=CascadeType.ALL)
+public List<UserAddExpense> getMopexpe() {
+	return mopexpe;
+}
+
+
+public void setMopexpe(List<UserAddExpense> mopexpe) {
+	this.mopexpe = mopexpe;
 }
 
 

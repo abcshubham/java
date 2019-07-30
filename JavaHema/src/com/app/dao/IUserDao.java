@@ -1,6 +1,10 @@
 package com.app.dao;
 
 import java.util.List;
+
+import com.app.pojos.UserAddExpense;
+import com.app.pojos.UserAddMop;
+import com.app.pojos.UserComplain;
 import com.app.pojos.UserExpense;
 import com.app.pojos.UserIncome;
 import com.app.pojos.UserPojos;
@@ -57,5 +61,27 @@ String deleteuser(Integer id);
 UserPojos formAdminsetting(Integer id);
 //update admin setting
 UserPojos adminsetting(UserPojos update);
+//user complainregister
+String complain(UserComplain compl);
+//comp details
+List<UserComplain> getusercomp();
+// delete comp
+String deletecomp(Integer id);
+// register user from admin
+String registerUserAdmin(UserPojos p);
+//list of mop
+List<UserAddMop> getallmop(Integer id);
+// save mop
+String savemop(UserAddMop mop);
+//delete mop 
+String deletemop(Integer id);
+//save Addexpensecat
+String categorytype(UserAddExpense expense);
+//delete mop 
+String deletecatexp(Integer id);
+// list of cat
+List<UserAddExpense> getallcat(Integer id);
+
+
 
 }
